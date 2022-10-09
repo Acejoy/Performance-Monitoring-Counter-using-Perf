@@ -1,0 +1,1 @@
+gcc -I/home/srinjoy/Documents/papi/src/install/include -c <filename> -L/home/srinjoy/Documents/papi/src/install/lib -lpapi
