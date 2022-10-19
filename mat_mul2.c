@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <unistd.h>
-
+#include <time.h>
 #include <inttypes.h>
 
 int N =256;
@@ -39,7 +39,8 @@ int main(int argc, char **argv)
 {    
     int m=5;
     struct perf_entry pArr[5];
-
+    clock_t start,end;
+    double cpu_time_used;
 
     // int N;
     // cin>>N;
@@ -129,7 +130,7 @@ int main(int argc, char **argv)
     }
 
     /* Read from memory. */
-    
+    start = clock();
 
     for(int i=0; i<N; i=i+block){
         for(int k=0; k<N; k=k+block){
@@ -141,12 +142,19 @@ int main(int argc, char **argv)
         }
     }
 
+    end = clock();
+
     for(int i=0; i<m; i++){
         ioctl(pArr[i].fd, PERF_EVENT_IOC_DISABLE, 0);
         read(pArr[i].fd, &pArr[i].count, sizeof(long long));    
         close(pArr[i].fd);
     }
+    
 
+    cpu_time_used=((double)(end - start))/CLOCKS_PER_SEC;
+
+    
+	printf("\nTime : %f\n",cpu_time_used);    
     printf("L1 Read misses: %lld\n", pArr[0].count);
     printf("LL Read misses: %lld\n", pArr[1].count);
     printf("LL Write misses: %lld\n", pArr[2].count);
